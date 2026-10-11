@@ -5,39 +5,40 @@ import java.util.Optional;
 import java.util.Set;
 
 public class BookingServiceImpl implements BookingService {
+    private final BookingEngine engine;
 
     public BookingServiceImpl(Hall hall, Duration holdDuration) {
-        // TODO
+        engine = new BookingEngine(hall, holdDuration);
     }
 
     @Override
     public Optional<Hold> hold(String clientId, Set<Seat> seats) {
-        throw new UnsupportedOperationException("TODO");
+        return engine.hold(clientId, seats);
     }
 
     @Override
     public Optional<Hold> holdOrWait(String clientId, Set<Seat> seats, Duration timeout)
             throws InterruptedException {
-        throw new UnsupportedOperationException("TODO");
+        return engine.holdOrWait(clientId, seats, timeout);
     }
 
     @Override
     public boolean confirm(Hold hold) {
-        throw new UnsupportedOperationException("TODO");
+        return engine.complete(hold, true);
     }
 
     @Override
     public boolean release(Hold hold) {
-        throw new UnsupportedOperationException("TODO");
+        return engine.complete(hold, false);
     }
 
     @Override
     public SeatStatus status(Seat seat) {
-        throw new UnsupportedOperationException("TODO");
+        return engine.status(seat);
     }
 
     @Override
     public void shutdown() {
-        throw new UnsupportedOperationException("TODO");
+        engine.shutdown();
     }
 }
