@@ -446,11 +446,21 @@ final class BookingEngine {
             }
         }
 
-        private void await(long left) throws InterruptedException {
+        private void await(long timeoutNanos) throws InterruptedException {
+            long started = System.nanoTime();
+            long remaining = timeoutNanos;
+
             synchronized (monitor) {
-                if (!signalled) {
-                    monitor.wait(left / 1_000_000, (int) (left % 1_000_000));
+                while (!signalled && remaining > 0) {
+                    monitor.wait(
+                            remaining / 1_000_000,
+                            (int) (remaining % 1_000_000)
+                    );
+
+                    remaining = timeoutNanos
+                            - (System.nanoTime() - started);
                 }
+
                 signalled = false;
             }
         }
